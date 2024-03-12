@@ -18,24 +18,22 @@ class User {
     public function authenticate() {
         $this->validateUsername($this->username);
         $this->validatePassword($this->password);
-    
         $user = $this->db->select('users', ['username' => $this->username]);
-    
+
         if ($user && password_verify($this->password, $user['password'])) {
             // Memorizza l'ID dell'utente
             $this->id = $user['id'];
             $_SESSION['user_id'] = $this->id;
             return true;
         }
-        
+
         // Se l'autenticazione fallisce, incrementa il conteggio dei tentativi falliti
         $this->db->incrementFailedAttempts($this->username);
         return false;
     }
-    
 
     private function validateUsername($username) {
-        if (!preg_match('/^[a-zA-Z0-9_]{5,}$/', $username)) { 
+        if (!preg_match('/^[a-zA-Z0-9_]{5,}$/', $username)) {
             throw new Exception('Invalid username');
         }
     }
@@ -51,9 +49,9 @@ class User {
         $this->validateUsername($username);
         $this->validateEmail($email);
         $this->validatePassword($password);
-    
+
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-    
+
         $this->db->insert('users', [
             'username' => $username,
             'email' => $email,
@@ -66,15 +64,15 @@ class User {
             throw new Exception('Invalid email');
         }
     }
-    
+
     public function update($username, $email, $password) {
         $username = $this->sanitizeInput($username);
         $this->validateUsername($username);
         $this->validateEmail($email);
         $this->validatePassword($password);
-    
+
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-    
+
         $this->db->update('users', [
             'email' => $email,
             'password' => $hashedPassword,
@@ -83,11 +81,10 @@ class User {
         ]);
     }
 
-    public function getId()
-{
-    // Supponendo che $this->id contenga l'ID dell'utente
-    return $this->id;
-}
+    public function getId() {
+        // Supponendo che $this->id contenga l'ID dell'utente
+        return $this->id;
+    }
 
     public function logout() {
         if(session_status() == PHP_SESSION_NONE) {
@@ -96,6 +93,7 @@ class User {
         session_destroy();
     }
 }
+
 
 
 class Database {

@@ -1,13 +1,26 @@
 <?php 
-session_start(); // Aggiungi questo all'inizio
+session_start(); 
 
+// Aggiungi questo all'inizio
 if (isset($_SESSION['error'])): ?>
-    <p><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
-<?php endif; 
+<p><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
+<?php endif;
 
 if (isset($_SESSION['message'])) {
     echo $_SESSION['message'];
     unset($_SESSION['message']); // Rimuovi il messaggio dopo averlo visualizzato
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = htmlspecialchars($_POST['username']);
+    $password = htmlspecialchars($_POST['password']);
+
+    if (preg_match('/^[a-zA-Z0-9_]{5,}$/', $username) && preg_match('/^.{8,}$/', $password)) {
+        // Continua con il tuo codice...
+    } else {
+        $_SESSION['error'] = "Invalid username or password.";
+        header('Location: /default/login.php');
+    }
 }
 ?>
 
